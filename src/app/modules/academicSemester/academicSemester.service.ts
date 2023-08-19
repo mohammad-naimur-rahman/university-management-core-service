@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { AcademicSemester, Prisma, PrismaClient } from '@prisma/client';
+import { AcademicSemester, Prisma } from '@prisma/client';
 import { paginationHelpers } from '../../../helpers/paginationHelper';
 import { IPaginationOptions } from '../../../interfaces/pagination';
+import prisma from '../../../shared/prisma';
 import { IGenericResponse } from './../../../interfaces/common';
 import { academicSemesterSearchableFields } from './academicSemester.constants';
 import { AcademicSemesterFilters } from './academicSemester.interface';
-
-const prisma = new PrismaClient();
 
 const insertIntoDB = async (
   data: AcademicSemester
@@ -52,6 +51,14 @@ const getAllFromDB = async (
     skip,
     take,
     where: whereConditions,
+    orderBy:
+      options.sortBy && options.sortOrder
+        ? {
+            [options.sortBy]: options.sortOrder,
+          }
+        : {
+            createdAt: 'desc',
+          },
   });
   return {
     data: result,

@@ -4,3 +4,10 @@ export const academicSemesterSearchableFields: string[] = [
   'startMonth',
   'endMonth',
 ];
+
+export const academicSemesterFilterableFiled: string[] = [
+  'searchTerm',
+  'code',
+  'startMonth',
+  'endMonth',
+];
