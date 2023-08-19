@@ -2,10 +2,10 @@
 import path from 'path';
 import { createLogger, format, transports } from 'winston';
 import DailyRotateFile from 'winston-daily-rotate-file';
+
 const { combine, timestamp, label, printf } = format;
 
-//Customm Log Format
-
+// Custom Log Format
 const myFormat = printf(({ level, message, label, timestamp }) => {
   const date = new Date(timestamp);
   const hour = date.getHours();
@@ -14,10 +14,12 @@ const myFormat = printf(({ level, message, label, timestamp }) => {
   return `${date.toDateString()} ${hour}:${minutes}:${seconds} } [${label}] ${level}: ${message}`;
 });
 
-const logger = createLogger({
-  level: 'info',
-  format: combine(label({ label: 'PH' }), timestamp(), myFormat),
-  transports: [
+const loggerTransports = [];
+
+if (process.env.NODE_ENV === 'development') {
+  loggerTransports.push(new transports.Console());
+} else {
+  loggerTransports.push(
     new transports.Console(),
     new DailyRotateFile({
       filename: path.join(
@@ -31,14 +33,22 @@ const logger = createLogger({
       zippedArchive: true,
       maxSize: '20m',
       maxFiles: '14d',
-    }),
-  ],
+    })
+  );
+}
+
+const logger = createLogger({
+  level: 'info',
+  format: combine(label({ label: 'PH' }), timestamp(), myFormat),
+  transports: loggerTransports,
 });
 
-const errorlogger = createLogger({
-  level: 'error',
-  format: combine(label({ label: 'PH' }), timestamp(), myFormat),
-  transports: [
+const errorloggerTransports = [];
+
+if (process.env.NODE_ENV === 'development') {
+  errorloggerTransports.push(new transports.Console());
+} else {
+  errorloggerTransports.push(
     new transports.Console(),
     new DailyRotateFile({
       filename: path.join(
@@ -52,8 +62,14 @@ const errorlogger = createLogger({
       zippedArchive: true,
       maxSize: '20m',
       maxFiles: '14d',
-    }),
-  ],
+    })
+  );
+}
+
+const errorlogger = createLogger({
+  level: 'error',
+  format: combine(label({ label: 'PH' }), timestamp(), myFormat),
+  transports: errorloggerTransports,
 });
 
-export { logger, errorlogger };
+export { errorlogger, logger };
