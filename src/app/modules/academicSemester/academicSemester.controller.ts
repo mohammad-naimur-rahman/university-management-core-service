@@ -25,7 +25,40 @@ const getAllFromDB = catchAsync(async (req, res) => {
   });
 });
 
+const getById = catchAsync(async (req, res) => {
+  const result = await academicSemesterService.getById(req.params.id);
+  sendResponse(res, {
+    data: result,
+    statusCode: 200,
+    message: 'Academic Semester fetched successfully!',
+  });
+});
+
+const updateDocument = catchAsync(async (req, res) => {
+  const result = await academicSemesterService.updateDocument(
+    req.params.id,
+    req.body
+  );
+  sendResponse(res, {
+    data: result,
+    statusCode: 200,
+    message: 'Academic Semester fetched successfully!',
+  });
+});
+
+const deleteById = catchAsync(async (req, res) => {
+  const result = await academicSemesterService.deleteById(req.params.id);
+  sendResponse(res, {
+    data: result,
+    statusCode: 200,
+    message: 'Academic Semester fetched successfully!',
+  });
+});
+
 export const academicSemesterController = {
   insertIntoDB,
   getAllFromDB,
+  getById,
+  updateDocument,
+  deleteById,
 };

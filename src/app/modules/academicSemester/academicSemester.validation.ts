@@ -10,6 +10,17 @@ const insertIntoDBValidation = z.object({
   }),
 });
 
+const updateFromDBValidation = z.object({
+  body: z.object({
+    year: z.number().optional(),
+    title: z.string().optional(),
+    code: z.string().optional(),
+    startMonth: z.string().optional(),
+    endMonth: z.string().optional(),
+  }),
+});
+
 export const academicSemesterValidatin = {
   insertIntoDBValidation,
+  updateFromDBValidation,
 };

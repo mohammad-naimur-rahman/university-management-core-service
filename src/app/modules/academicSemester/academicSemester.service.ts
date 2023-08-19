@@ -18,7 +18,7 @@ const getAllFromDB = async (
   filters: AcademicSemesterFilters,
   options: IPaginationOptions
 ): Promise<IGenericResponse<AcademicSemester[]>> => {
-  const { limit: take, skip } = paginationHelpers.calculatePagination(options);
+  const { page, limit, skip } = paginationHelpers.calculatePagination(options);
   const { searchTerm, ...filterData } = filters;
 
   const andCOnditions = [];
@@ -49,7 +49,7 @@ const getAllFromDB = async (
 
   const result = await prisma.academicSemester.findMany({
     skip,
-    take,
+    take: limit,
     where: whereConditions,
     orderBy:
       options.sortBy && options.sortOrder
@@ -63,14 +63,42 @@ const getAllFromDB = async (
   return {
     data: result,
     meta: {
-      total: 10,
-      limit: 10,
-      page: 1,
+      total: result.length,
+      limit,
+      page,
     },
   };
+};
+
+const getById = async (id: string): Promise<AcademicSemester | null> => {
+  const result = await prisma.academicSemester.findUnique({
+    where: { id },
+  });
+  return result;
+};
+
+const updateDocument = async (
+  id: string,
+  data: Partial<AcademicSemester>
+): Promise<AcademicSemester | null> => {
+  const result = await prisma.academicSemester.update({
+    where: { id },
+    data,
+  });
+  return result;
+};
+
+const deleteById = async (id: string): Promise<AcademicSemester | null> => {
+  const result = await prisma.academicSemester.delete({
+    where: { id },
+  });
+  return result;
 };
 
 export const academicSemesterService = {
   insertIntoDB,
   getAllFromDB,
+  getById,
+  deleteById,
+  updateDocument,
 };
