@@ -1,0 +1,102 @@
+Sat Aug 19 2023 17:28:48 } [PH] error: 🐱‍🏍 globalErrorHandler ~~ 
+Invalid `prisma.academicSemester.findMany()` invocation in
+G:\apollo-projects\university-management-core-service\src\app\modules\academicSemester\academicSemester.service.ts:42:48
+
+  39 
+  40 console.log(whereConditiont);
+  41 
+→ 42 const result = await prisma.academicSemester.findMany({
+       skip: 0,
+       take: 10,
+       where: {
+         AND: [
+           {
+             OR: [
+               {
+                 title: {
+                   contains: "01",
+                   mode: "insensitive"
+                 }
+               },
+               {
+                 code: {
+                   contains: "01",
+                   mode: "insensitive"
+                 }
+               },
+               {
+                 startMonth: {
+                   contains: "01",
+                   mode: "insensitive"
+                 }
+               },
+               {
+                 endMonth: {
+                   contains: "01",
+                   mode: "insensitive"
+                 }
+               },
+               {
+                 year: {
+                   contains: "01",
+                   mode: "insensitive"
+                 }
+               }
+             ]
+           }
+         ]
+       }
+     })
+
+Unknown argument `contains`. Available options are listed in green.
+Sat Aug 19 2023 17:30:35 } [PH] error: 🐱‍🏍 globalErrorHandler ~~ 
+Invalid `prisma.academicSemester.findMany()` invocation in
+G:\apollo-projects\university-management-core-service\src\app\modules\academicSemester\academicSemester.service.ts:40:48
+
+  37 const whereConditions: Prisma.AcademicSemesterWhereInput =
+  38   andCOnditions.length ? { AND: andCOnditions } : {};
+  39 
+→ 40 const result = await prisma.academicSemester.findMany({
+       skip: 0,
+       take: 10,
+       where: {
+         AND: [
+           {
+             OR: [
+               {
+                 title: {
+                   contains: "01",
+                   mode: "insensitive"
+                 }
+               },
+               {
+                 code: {
+                   contains: "01",
+                   mode: "insensitive"
+                 }
+               },
+               {
+                 startMonth: {
+                   contains: "01",
+                   mode: "insensitive"
+                 }
+               },
+               {
+                 endMonth: {
+                   contains: "01",
+                   mode: "insensitive"
+                 }
+               },
+               {
+                 year: {
+                   contains: "01",
+                   mode: "insensitive"
+                 }
+               }
+             ]
+           }
+         ]
+       }
+     })
+
+Unknown argument `contains`. Available options are listed in green.
