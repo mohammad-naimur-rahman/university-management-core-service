@@ -1,0 +1,25 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "G:\\apollo-projects\\university-management-core-service\\logs\\winston\\successes\\.25aeb1bd6eb01a0de39a77d4f5af324b4587823d-audit.json",
+    "files": [
+        {
+            "date": 1692417121238,
+            "name": "G:\\apollo-projects\\university-management-core-service\\logs\\winston\\successes\\phu-2023-19-08-09-success.log",
+            "hash": "2eb28853306c236c76358a46d746e19b08c62aae357d07bc98eae138243ba750"
+        },
+        {
+            "date": 1692419715217,
+            "name": "G:\\apollo-projects\\university-management-core-service\\logs\\winston\\successes\\phu-2023-19-08-10-success.log",
+            "hash": "c058bdeb11769f9db60c65b6d0b92d08765cfab5267dbb3709080c2be57ff28c"
+        },
+        {
+            "date": 1692421649208,
+            "name": "G:\\apollo-projects\\university-management-core-service\\logs\\winston\\successes\\phu-2023-19-08-11-success.log",
+            "hash": "f6af633db16420deaabc91757c5df10670d9c32a4b8982f8a25bcd2dc446a98a"
+        }
+    ],
+    "hashType": "sha256"
+}
