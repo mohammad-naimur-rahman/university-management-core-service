@@ -116,6 +116,9 @@ const updateDocument = async (
   const result = await prisma.academicDepartment.update({
     where: { id },
     data: payload,
+    include: {
+      academicFaculty: true,
+    },
   });
   return result;
 };
@@ -123,6 +126,9 @@ const updateDocument = async (
 const deleteById = async (id: string): Promise<AcademicDepartment | null> => {
   const result = await prisma.academicDepartment.delete({
     where: { id },
+    include: {
+      academicFaculty: true,
+    },
   });
   return result;
 };
