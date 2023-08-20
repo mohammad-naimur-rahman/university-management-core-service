@@ -1,3 +1,4 @@
+import httpStatus from 'http-status';
 import { paginationFields } from '../../../constants/pagination';
 import catchAsync from '../../../shared/catchAsync';
 import pick from '../../../shared/pick';
@@ -9,7 +10,7 @@ const insertIntoDB = catchAsync(async (req, res) => {
   const result = await academicSemesterService.insertIntoDB(req.body);
   sendResponse(res, {
     data: result,
-    statusCode: 201,
+    statusCode: httpStatus.CREATED,
     message: 'Academic Semester created successfully!',
   });
 });
@@ -20,38 +21,45 @@ const getAllFromDB = catchAsync(async (req, res) => {
   const result = await academicSemesterService.getAllFromDB(filters, options);
   sendResponse(res, {
     data: result,
-    statusCode: 200,
+    statusCode: httpStatus.OK,
     message: 'Academic Semesters fetched successfully!',
   });
 });
 
 const getById = catchAsync(async (req, res) => {
-  const result = await academicSemesterService.getById(req.params.id);
+  const {
+    params: { id },
+  } = req;
+  const result = await academicSemesterService.getById(id);
   sendResponse(res, {
     data: result,
-    statusCode: 200,
+    statusCode: httpStatus.OK,
     message: 'Academic Semester fetched successfully!',
   });
 });
 
 const updateDocument = catchAsync(async (req, res) => {
-  const result = await academicSemesterService.updateDocument(
-    req.params.id,
-    req.body
-  );
+  const {
+    body,
+    params: { id },
+  } = req;
+  const result = await academicSemesterService.updateDocument(id, body);
   sendResponse(res, {
     data: result,
-    statusCode: 200,
-    message: 'Academic Semester fetched successfully!',
+    statusCode: httpStatus.OK,
+    message: 'Academic Semester updated successfully!',
   });
 });
 
 const deleteById = catchAsync(async (req, res) => {
-  const result = await academicSemesterService.deleteById(req.params.id);
+  const {
+    params: { id },
+  } = req;
+  const result = await academicSemesterService.deleteById(id);
   sendResponse(res, {
     data: result,
-    statusCode: 200,
-    message: 'Academic Semester fetched successfully!',
+    statusCode: httpStatus.OK,
+    message: 'Academic Semester deleted successfully!',
   });
 });
 

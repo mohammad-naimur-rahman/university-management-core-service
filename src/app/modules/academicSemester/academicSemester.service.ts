@@ -79,11 +79,11 @@ const getById = async (id: string): Promise<AcademicSemester | null> => {
 
 const updateDocument = async (
   id: string,
-  data: Partial<AcademicSemester>
+  payload: Partial<AcademicSemester>
 ): Promise<AcademicSemester | null> => {
   const result = await prisma.academicSemester.update({
     where: { id },
-    data,
+    data: payload,
   });
   return result;
 };

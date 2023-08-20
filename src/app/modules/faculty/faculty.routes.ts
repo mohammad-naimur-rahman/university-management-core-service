@@ -5,14 +5,21 @@ import { FacultyValidation } from './faculty.validations';
 
 const router = express.Router();
 
-router.get('/', FacultyController.getAllFromDB);
+router
+  .route('/')
+  .get(FacultyController.getAllFromDB)
+  .post(
+    validateRequest(FacultyValidation.create),
+    FacultyController.insertIntoDB
+  );
 
-router.get('/:id', FacultyController.getByIdFromDB);
-
-router.post(
-  '/',
-  validateRequest(FacultyValidation.create),
-  FacultyController.insertIntoDB
-);
+router
+  .route('/:id')
+  .get(FacultyController.getByIdFromDB)
+  .patch(
+    validateRequest(FacultyValidation.update),
+    FacultyController.updateDocument
+  )
+  .delete(FacultyController.deleteById);
 
 export const facultyRoutes = router;
