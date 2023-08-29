@@ -133,6 +133,64 @@ const getByIdFromDB = async (
   return result;
 };
 
+const updateOneInDB = async (
+  id: string,
+  payload: Partial<SemesterRegistration>
+): Promise<SemesterRegistration> => {
+  const isExist = await prisma.semesterRegistration.findUnique({
+    where: { id },
+  });
+
+  const { status } = payload;
+
+  if (!isExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Semester Registration not found');
+  }
+
+  if (status) {
+    if (
+      isExist.status === SemesterRegistrationStatus.UPCOMING &&
+      status !== SemesterRegistrationStatus.ONGOING
+    ) {
+      throw new ApiError(
+        httpStatus.BAD_REQUEST,
+        `Thers is already an ${isExist.status} registration.`
+      );
+    }
+
+    if (
+      isExist.status === SemesterRegistrationStatus.ONGOING &&
+      status !== SemesterRegistrationStatus.ENDED
+    ) {
+      throw new ApiError(
+        httpStatus.BAD_REQUEST,
+        `Thers is already an ${isExist.status} registration.`
+      );
+    }
+
+    if (
+      isExist.status === SemesterRegistrationStatus.ENDED &&
+      status !== SemesterRegistrationStatus.ENDED
+    ) {
+      throw new ApiError(
+        httpStatus.BAD_REQUEST,
+        `Thers is already an ${isExist.status} registration.`
+      );
+    }
+  }
+
+  const result = await prisma.semesterRegistration.update({
+    where: {
+      id,
+    },
+    data: payload,
+    include: {
+      academicSemester: true,
+    },
+  });
+  return result;
+};
+
 const deleteByIdFromDB = async (id: string): Promise<SemesterRegistration> => {
   const result = await prisma.semesterRegistration.delete({
     where: {
@@ -149,5 +207,6 @@ export const SemesterRegistrationService = {
   insertIntoDB,
   getAllFromDB,
   getByIdFromDB,
+  updateOneInDB,
   deleteByIdFromDB,
 };
