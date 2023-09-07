@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Prisma,
   SemesterRegistration,
@@ -11,12 +10,16 @@ import { paginationHelpers } from '../../../helpers/paginationHelper';
 import { IGenericResponse } from '../../../interfaces/common';
 import { IPaginationOptions } from '../../../interfaces/pagination';
 import prisma from '../../../shared/prisma';
+import { studentSemesterRegistrationCourseService } from '../studentSemesterRegistrationCourse/studentSemesterRegistrationCourse.service';
 import {
   semesterRegistrationRelationalFields,
   semesterRegistrationRelationalFieldsMapper,
   semesterRegistrationSearchableFields,
 } from './semesterRegistration.constants';
-import { ISemesterRegistrationFilterRequest } from './semesterRegistration.interface';
+import {
+  IEnrollCoursePayload,
+  ISemesterRegistrationFilterRequest,
+} from './semesterRegistration.interface';
 
 const insertIntoDB = async (
   data: SemesterRegistration
@@ -134,50 +137,43 @@ const getByIdFromDB = async (
   return result;
 };
 
+// UPCOMING > ONGOING  > ENDED
+
 const updateOneInDB = async (
   id: string,
   payload: Partial<SemesterRegistration>
 ): Promise<SemesterRegistration> => {
+  console.log(payload.status);
   const isExist = await prisma.semesterRegistration.findUnique({
-    where: { id },
+    where: {
+      id,
+    },
   });
 
-  const { status } = payload;
-
   if (!isExist) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Semester Registration not found');
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Data not found!');
   }
 
-  if (status) {
-    if (
-      isExist.status === SemesterRegistrationStatus.UPCOMING &&
-      status !== SemesterRegistrationStatus.ONGOING
-    ) {
-      throw new ApiError(
-        httpStatus.BAD_REQUEST,
-        `Thers is already an ${isExist.status} registration.`
-      );
-    }
+  if (
+    payload.status &&
+    isExist.status === SemesterRegistrationStatus.UPCOMING &&
+    payload.status !== SemesterRegistrationStatus.ONGOING
+  ) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'Can only move from UPCOMING to ONGOING'
+    );
+  }
 
-    if (
-      isExist.status === SemesterRegistrationStatus.ONGOING &&
-      status !== SemesterRegistrationStatus.ENDED
-    ) {
-      throw new ApiError(
-        httpStatus.BAD_REQUEST,
-        `Thers is already an ${isExist.status} registration.`
-      );
-    }
-
-    if (
-      isExist.status === SemesterRegistrationStatus.ENDED &&
-      status !== SemesterRegistrationStatus.ENDED
-    ) {
-      throw new ApiError(
-        httpStatus.BAD_REQUEST,
-        `Thers is already an ${isExist.status} registration.`
-      );
-    }
+  if (
+    payload.status &&
+    isExist.status === SemesterRegistrationStatus.ONGOING &&
+    payload.status !== SemesterRegistrationStatus.ENDED
+  ) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'Can only move from ONGOING to ENDED'
+    );
   }
 
   const result = await prisma.semesterRegistration.update({
@@ -189,6 +185,7 @@ const updateOneInDB = async (
       academicSemester: true,
     },
   });
+
   return result;
 };
 
@@ -273,6 +270,122 @@ const startMyRegistration = async (
   };
 };
 
+const enrollIntoCourse = async (
+  authUserId: string,
+  payload: IEnrollCoursePayload
+): Promise<{
+  message: string;
+}> => {
+  return studentSemesterRegistrationCourseService.enrollIntoCourse(
+    authUserId,
+    payload
+  );
+};
+
+const withdrewFromCourse = async (
+  authUserId: string,
+  payload: IEnrollCoursePayload
+): Promise<{
+  message: string;
+}> => {
+  return studentSemesterRegistrationCourseService.withdrewFromCourse(
+    authUserId,
+    payload
+  );
+};
+
+const confirmMyRegistration = async (
+  authUserId: string
+): Promise<{ message: string }> => {
+  const semesterRegistration = await prisma.semesterRegistration.findFirst({
+    where: {
+      status: SemesterRegistrationStatus.ONGOING,
+    },
+  });
+
+  // 3 - 6
+  const studentSemesterRegistration =
+    await prisma.studentSemesterRegistration.findFirst({
+      where: {
+        semesterRegistration: {
+          id: semesterRegistration?.id,
+        },
+        student: {
+          studentId: authUserId,
+        },
+      },
+    });
+
+  if (!studentSemesterRegistration) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'You are not recognized for this semester!'
+    );
+  }
+
+  if (studentSemesterRegistration.totalCreditsTaken === 0) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'You are not enrolled in any course!'
+    );
+  }
+
+  if (
+    studentSemesterRegistration.totalCreditsTaken &&
+    semesterRegistration?.minCredit &&
+    semesterRegistration.maxCredit &&
+    (studentSemesterRegistration.totalCreditsTaken <
+      semesterRegistration?.minCredit ||
+      studentSemesterRegistration.totalCreditsTaken >
+        semesterRegistration?.maxCredit)
+  ) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      `You can take only ${semesterRegistration.minCredit} to ${semesterRegistration.maxCredit} credits`
+    );
+  }
+
+  await prisma.studentSemesterRegistration.update({
+    where: {
+      id: studentSemesterRegistration.id,
+    },
+    data: {
+      isConfirmed: true,
+    },
+  });
+  return {
+    message: 'Your registration is confirmed!',
+  };
+};
+
+const getMyRegistration = async (authUserId: string) => {
+  const semesterRegistration = await prisma.semesterRegistration.findFirst({
+    where: {
+      status: SemesterRegistrationStatus.ONGOING,
+    },
+    include: {
+      academicSemester: true,
+    },
+  });
+
+  const studentSemesterRegistration =
+    await prisma.studentSemesterRegistration.findFirst({
+      where: {
+        semesterRegistration: {
+          id: semesterRegistration?.id,
+        },
+        student: {
+          studentId: authUserId,
+        },
+      },
+      include: {
+        student: true,
+      },
+    });
+
+  return { semesterRegistration, studentSemesterRegistration };
+};
+
 export const SemesterRegistrationService = {
   insertIntoDB,
   getAllFromDB,
@@ -280,4 +393,8 @@ export const SemesterRegistrationService = {
   updateOneInDB,
   deleteByIdFromDB,
   startMyRegistration,
+  enrollIntoCourse,
+  withdrewFromCourse,
+  confirmMyRegistration,
+  getMyRegistration,
 };
