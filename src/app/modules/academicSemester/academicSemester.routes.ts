@@ -1,32 +1,30 @@
-import { Router } from 'express';
+import express from 'express';
 import { ENUM_USER_ROLE } from '../../../enums/user';
 import auth from '../../middlewares/auth';
 import validateRequest from '../../middlewares/validateRequest';
-import { academicSemesterController } from './academicSemester.controller';
-import { academicSemesterValidatin } from './academicSemester.validations';
+import { AcademicSemeterController } from './academicSemster.controller';
+import { AcademicSemesterValidation } from './academicSemster.validation';
+const router = express.Router();
 
-const router = Router();
+router.get('/', AcademicSemeterController.getAllFromDB);
+router.get('/:id', AcademicSemeterController.getDataById);
+router.post(
+  '/',
+  validateRequest(AcademicSemesterValidation.create),
+  AcademicSemeterController.insertIntoDB
+);
 
-router
-  .route('/')
-  .get(academicSemesterController.getAllFromDB)
-  .post(
-    auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
-    validateRequest(academicSemesterValidatin.insertIntoDBValidation),
-    academicSemesterController.insertIntoDB
-  );
+router.patch(
+  '/:id',
+  validateRequest(AcademicSemesterValidation.update),
+  auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
+  AcademicSemeterController.updateOneInDB
+);
 
-router
-  .route('/:id')
-  .get(academicSemesterController.getById)
-  .patch(
-    auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
-    validateRequest(academicSemesterValidatin.updateFromDBValidation),
-    academicSemesterController.updateDocument
-  )
-  .delete(
-    auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
-    academicSemesterController.deleteById
-  );
+router.delete(
+  '/:id',
+  auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
+  AcademicSemeterController.deleteByIdFromDB
+);
 
-export const AcademicSemesterRoutes = router;
+export const AcademicSemeterRoutes = router;

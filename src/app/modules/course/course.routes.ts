@@ -15,6 +15,7 @@ router.post(
   auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
   CourseController.insertIntoDB
 );
+
 router.patch(
   '/:id',
   validateRequest(CourseValidation.update),
@@ -32,7 +33,7 @@ router.post(
   '/:id/assign-faculties',
   validateRequest(CourseValidation.assignOrRemoveFaculties),
   auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
-  CourseController.assignFaculties
+  CourseController.assignFaculies
 );
 
 router.delete(

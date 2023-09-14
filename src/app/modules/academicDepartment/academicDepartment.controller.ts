@@ -3,7 +3,7 @@ import httpStatus from 'http-status';
 import catchAsync from '../../../shared/catchAsync';
 import pick from '../../../shared/pick';
 import sendResponse from '../../../shared/sendResponse';
-import { academicDepartmentFilterableFields } from './academicDepartment.constants';
+import { academicDepartmentFilterableFields } from './academicDepartment.contants';
 import { AcademicDepartmentService } from './academicDepartment.service';
 
 const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
@@ -40,28 +40,25 @@ const getByIdFromDB = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const updateDocument = catchAsync(async (req, res) => {
-  const {
-    body,
-    params: { id },
-  } = req;
-  const result = await AcademicDepartmentService.updateDocument(id, body);
+const updateOneInDB = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await AcademicDepartmentService.updateOneInDB(id, req.body);
   sendResponse(res, {
-    data: result,
     statusCode: httpStatus.OK,
-    message: 'Academic Department updated successfully!',
+    success: true,
+    message: 'AcademicDepartment updated successfully',
+    data: result,
   });
 });
 
-const deleteById = catchAsync(async (req, res) => {
-  const {
-    params: { id },
-  } = req;
-  const result = await AcademicDepartmentService.deleteById(id);
+const deleteByIdFromDB = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await AcademicDepartmentService.deleteByIdFromDB(id);
   sendResponse(res, {
-    data: result,
     statusCode: httpStatus.OK,
-    message: 'Academic Department deleted successfully!',
+    success: true,
+    message: 'AcademicDepartment delete successfully',
+    data: result,
   });
 });
 
@@ -69,6 +66,6 @@ export const AcademicDepartmentController = {
   insertIntoDB,
   getAllFromDB,
   getByIdFromDB,
-  updateDocument,
-  deleteById,
+  updateOneInDB,
+  deleteByIdFromDB,
 };

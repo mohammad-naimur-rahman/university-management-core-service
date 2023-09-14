@@ -40,28 +40,61 @@ const getByIdFromDB = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const updateDocument = catchAsync(async (req, res) => {
-  const {
-    body,
-    params: { id },
-  } = req;
-  const result = await StudentService.updateDocument(id, body);
+const updateIntoDB = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const payload = req.body;
+  const result = await StudentService.updateIntoDB(id, payload);
   sendResponse(res, {
-    data: result,
     statusCode: httpStatus.OK,
-    message: 'Student updated successfully!',
+    success: true,
+    message: 'Student updated successfully',
+    data: result,
   });
 });
 
-const deleteById = catchAsync(async (req, res) => {
-  const {
-    params: { id },
-  } = req;
-  const result = await StudentService.deleteById(id);
+const deleteFromDB = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await StudentService.deleteFromDB(id);
   sendResponse(res, {
-    data: result,
     statusCode: httpStatus.OK,
-    message: 'Student deleted successfully!',
+    success: true,
+    message: 'Student deleted successfully',
+    data: result,
+  });
+});
+
+const myCourses = catchAsync(async (req: Request, res: Response) => {
+  const user = (req as any).user;
+  const filter = pick(req.query, ['courseId', 'academicSemesterId']);
+  const result = await StudentService.myCourses(user.userId, filter);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Student Courses data fetched successfully',
+    data: result,
+  });
+});
+
+const getMyCourseSchedules = catchAsync(async (req: Request, res: Response) => {
+  const user = (req as any).user;
+  const filter = pick(req.query, ['courseId', 'academicSemesterId']);
+  const result = await StudentService.getMyCourseSchedules(user.userId, filter);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Course Schedules data fetched successfully',
+    data: result,
+  });
+});
+
+const myAcademicInfo = catchAsync(async (req: Request, res: Response) => {
+  const user = (req as any).user;
+  const result = await StudentService.getMyAcademicInfo(user.userId);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'My Academic Info data fetched successfully',
+    data: result,
   });
 });
 
@@ -69,6 +102,9 @@ export const StudentController = {
   insertIntoDB,
   getAllFromDB,
   getByIdFromDB,
-  updateDocument,
-  deleteById,
+  updateIntoDB,
+  deleteFromDB,
+  myCourses,
+  getMyCourseSchedules,
+  myAcademicInfo,
 };

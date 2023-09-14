@@ -7,27 +7,40 @@ import { FacultyValidation } from './faculty.validations';
 
 const router = express.Router();
 
-router
-  .route('/')
-  .get(FacultyController.getAllFromDB)
-  .post(
-    auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
-    validateRequest(FacultyValidation.create),
-    FacultyController.insertIntoDB
-  );
+router.get('/', FacultyController.getAllFromDB);
 
-router
-  .route('/:id')
-  .get(FacultyController.getByIdFromDB)
-  .patch(
-    auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
-    validateRequest(FacultyValidation.update),
-    FacultyController.updateDocument
-  )
-  .delete(
-    auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
-    FacultyController.deleteById
-  );
+router.get(
+  '/my-courses',
+  auth(ENUM_USER_ROLE.FACULTY),
+  FacultyController.myCourses
+);
+
+router.get('/:id', FacultyController.getByIdFromDB);
+
+router.get(
+  '/my-course-students',
+  auth(ENUM_USER_ROLE.FACULTY),
+  FacultyController.getMyCourseStudents
+);
+
+router.post(
+  '/',
+  validateRequest(FacultyValidation.create),
+  FacultyController.insertIntoDB
+);
+
+router.patch(
+  '/:id',
+  validateRequest(FacultyValidation.update),
+  auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
+  FacultyController.updateOneInDB
+);
+
+router.delete(
+  '/:id',
+  auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
+  FacultyController.deleteByIdFromDB
+);
 
 router.post(
   '/:id/assign-courses',

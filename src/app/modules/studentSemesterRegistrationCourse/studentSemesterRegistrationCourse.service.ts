@@ -71,8 +71,7 @@ const enrollIntoCourse = async (
         studentId: student?.id,
         semesterRegistrationId: semesterRegistration?.id,
         offeredCourseId: payload.offeredCourseId,
-        // offeredCourseSectionId: payload.offeredCourseSectionId,
-        offeredcourseSEctionId: payload.offeredCourseSectionId,
+        offeredCourseSectionId: payload.offeredCourseSectionId,
       },
     });
 

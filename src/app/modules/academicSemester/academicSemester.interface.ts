@@ -1,5 +1,3 @@
-import { AcademicSemester } from '@prisma/client';
-
-export type AcademicSemesterFilters = Partial<AcademicSemester> & {
+export type IAcademicSemeterFilterRequest = {
   searchTerm?: string;
 };

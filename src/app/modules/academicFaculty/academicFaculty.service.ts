@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AcademicFaculty, Prisma } from '@prisma/client';
 import { paginationHelpers } from '../../../helpers/paginationHelper';
 import { IGenericResponse } from '../../../interfaces/common';
@@ -84,20 +83,24 @@ const getByIdFromDB = async (id: string): Promise<AcademicFaculty | null> => {
   return result;
 };
 
-const updateDocument = async (
+const updateOneInDB = async (
   id: string,
   payload: Partial<AcademicFaculty>
-): Promise<AcademicFaculty | null> => {
+): Promise<AcademicFaculty> => {
   const result = await prisma.academicFaculty.update({
-    where: { id },
+    where: {
+      id,
+    },
     data: payload,
   });
   return result;
 };
 
-const deleteById = async (id: string): Promise<AcademicFaculty | null> => {
+const deleteByIdFromDB = async (id: string): Promise<AcademicFaculty> => {
   const result = await prisma.academicFaculty.delete({
-    where: { id },
+    where: {
+      id,
+    },
   });
   return result;
 };
@@ -106,6 +109,6 @@ export const AcademicFacultyService = {
   insertIntoDB,
   getAllFromDB,
   getByIdFromDB,
-  updateDocument,
-  deleteById,
+  updateOneInDB,
+  deleteByIdFromDB,
 };

@@ -6,7 +6,7 @@ const create = z.object({
       required_error: 'Academic Department Id is required',
     }),
     semesterRegistrationId: z.string({
-      required_error: 'Semester Registration is required',
+      required_error: 'Semester Reg. is required',
     }),
     courseIds: z.array(
       z.string({

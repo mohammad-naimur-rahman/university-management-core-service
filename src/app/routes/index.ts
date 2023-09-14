@@ -1,7 +1,7 @@
 import express from 'express';
 import { academicDepartmentRoutes } from '../modules/academicDepartment/academicDepartment.routes';
 import { academicFacultyRoutes } from '../modules/academicFaculty/academicFaculty.routes';
-import { AcademicSemesterRoutes } from '../modules/academicSemester/academicSemester.routes';
+import { AcademicSemeterRoutes } from '../modules/academicSemester/academicSemester.routes';
 import { buildingRoutes } from '../modules/building/building.routes';
 import { courseRoutes } from '../modules/course/course.routes';
 import { facultyRoutes } from '../modules/faculty/faculty.routes';
@@ -11,21 +11,23 @@ import { offeredCourseSectionRoutes } from '../modules/offeredCourseSection/offe
 import { roomRoutes } from '../modules/room/room.routes';
 import { semesterRegistrationRoutes } from '../modules/semesterRegistration/semesterRegistration.routes';
 import { studentRoutes } from '../modules/student/student.routes';
+import { studentEnrolledCourseMarkRoutes } from '../modules/studentEnrolledCourseMark/studentEnrolledCourseMark.routes';
 
 const router = express.Router();
 
 const moduleRoutes = [
+  // ... routes
   {
-    path: '/academicSemesters',
-    route: AcademicSemesterRoutes,
+    path: '/academic-semesters',
+    route: AcademicSemeterRoutes,
   },
   {
-    path: '/academicDepartments',
-    route: academicDepartmentRoutes,
-  },
-  {
-    path: '/academicFaculties',
+    path: '/academic-faculties',
     route: academicFacultyRoutes,
+  },
+  {
+    path: '/academic-departments',
+    route: academicDepartmentRoutes,
   },
   {
     path: '/faculties',
@@ -62,6 +64,10 @@ const moduleRoutes = [
   {
     path: '/offered-course-class-schedules',
     route: offeredCourseClassScheduleRoutes,
+  },
+  {
+    path: '/student-enrolled-course-marks',
+    route: studentEnrolledCourseMarkRoutes,
   },
 ];
 

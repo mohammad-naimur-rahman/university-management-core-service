@@ -7,10 +7,9 @@ const handleValidationError = (
   const errors = [
     {
       path: '',
-      message: error?.message,
+      message: error.message,
     },
   ];
-
   const statusCode = 400;
   return {
     statusCode,

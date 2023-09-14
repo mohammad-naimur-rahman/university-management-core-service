@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AcademicDepartment, Prisma } from '@prisma/client';
 import { paginationHelpers } from '../../../helpers/paginationHelper';
 import { IGenericResponse } from '../../../interfaces/common';
@@ -8,7 +7,7 @@ import {
   academicDepartmentRelationalFields,
   academicDepartmentRelationalFieldsMapper,
   academicDepartmentSearchableFields,
-} from './academicDepartment.constants';
+} from './academicDepartment.contants';
 import { IAcademicDepartmentFilterRequest } from './academicDepartment.interface';
 
 const insertIntoDB = async (
@@ -109,12 +108,14 @@ const getByIdFromDB = async (
   return result;
 };
 
-const updateDocument = async (
+const updateOneInDB = async (
   id: string,
   payload: Partial<AcademicDepartment>
-): Promise<AcademicDepartment | null> => {
+): Promise<AcademicDepartment> => {
   const result = await prisma.academicDepartment.update({
-    where: { id },
+    where: {
+      id,
+    },
     data: payload,
     include: {
       academicFaculty: true,
@@ -123,9 +124,11 @@ const updateDocument = async (
   return result;
 };
 
-const deleteById = async (id: string): Promise<AcademicDepartment | null> => {
+const deleteByIdFromDB = async (id: string): Promise<AcademicDepartment> => {
   const result = await prisma.academicDepartment.delete({
-    where: { id },
+    where: {
+      id,
+    },
     include: {
       academicFaculty: true,
     },
@@ -137,6 +140,6 @@ export const AcademicDepartmentService = {
   insertIntoDB,
   getAllFromDB,
   getByIdFromDB,
-  updateDocument,
-  deleteById,
+  updateOneInDB,
+  deleteByIdFromDB,
 };
